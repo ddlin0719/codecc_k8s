@@ -1,0 +1,13 @@
+global:
+    name: consul
+    domain: ci
+    datacenter: dc
+server:
+    replicas: 1
+    storage: 10Gi
+    storageClass: nfs-consul
+    bootstrapExpect: 1
+client:
+    enabled: true
+meshGateway:
+    enabled: false
