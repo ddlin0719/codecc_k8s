@@ -8,20 +8,27 @@ set -e
 source ../../env.properties
 
 #设置存储
+echo 'set up store'
 cat consul-nfs.yaml|sed "s/{{nfs_server}}/$nfs_server/g"|kubectl apply -f -
 
 # 安装consul服务
+echo 'set up consul - repo add'
 helm3 repo add hashicorp https://helm.releases.hashicorp.com
+echo 'set up consul - install consul'
 helm3 install consul hashicorp/consul -f consul-server.yaml
 
 # 把所有node都打上isIngress="true"的label
+echo 'kubectl label node'
 kubectl label node --all isIngress="true"
 
 # 安装ingress-nginx
+echo 'set ingress nginx - repo add'
 helm3 repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+echo 'set ingress nginx - install ingress-nginx'
 helm3 install ingress-nginx ingress-nginx/ingress-nginx -f ingress-nginx.yaml
 
 # 配置ingress负载
+echo 'kubectl apply -f ingress.yaml'
 kubectl apply -f ingress.yaml
 
 set +e
