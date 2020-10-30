@@ -19,7 +19,7 @@ spec:
           name: bkci-codecc-gateway
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           workingDir: /usr/local/openresty/nginx/
-          command: ['/bin/sh','-c','/data/docker/bkci/ci/gateway/gateway_run.sh']
+          command: ['/bin/sh','-c','/data/docker/bkci/codecc/gateway/gateway_run_codecc.sh']
           env:
             - name: INSTALL_PATH
               value: /data/docker/bkci

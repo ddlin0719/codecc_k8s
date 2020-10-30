@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
         - image: {{ .Values.image.hub }}/bkci-codecc-task:{{ .Values.image.tag }}
-          name: bkci-notify
+          name: bkci-codecc-task
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           workingDir: /data/docker/bkci/ci/backend/
-          command: ['/bin/sh','-c','/data/docker/bkci/ci/backend/module_run_codecc.sh']
+          command: ['/bin/sh','-c','/data/docker/bkci/codecc/backend/module_run_codecc.sh']
           env:
             - name: CONSUL_SERVER
               value: {{ .Values.consul.server }}
