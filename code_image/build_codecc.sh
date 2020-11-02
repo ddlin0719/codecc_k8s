@@ -4,7 +4,7 @@ echo "导入环境变量开始..."
 source ../env.properties
 
 TMP_PACKAGE="tmp_codecc"
-IMAGE_VERSION="0.0.1-20201030"
+IMAGE_VERSION=1.0
 
 mkdir -p $TMP_PACKAGE && rm -rf $TMP_PACKAGE/*
 

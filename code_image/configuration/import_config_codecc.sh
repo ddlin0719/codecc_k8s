@@ -1,12 +1,12 @@
 set -e
+pwd
 
 ##初始化数据库
-for SQL in /data/docker/bkci/codecc/configuration/support-files/codecc/nosql/db_task_data/*.json; do TODO() done
-for SQL in /data/docker/bkci/codecc/configuration/support-files/codecc/nosql/db_defect_data/*.json; do TODO() done
+sh /data/docker/bkci/support-files/codecc/db_data.sh $MONGO_HOST $MONGO_PORT $MONGO_USER $MONGO_PASS
 
 ## 初始化配置
-./codecc_render_tpl -m codecc ./support-files/codecc/templates/*.yml
-backends=(task defect report asyncreport codeccjob schedule openapi apiquery quartz)
+./codecc_render_tpl -m codecc /data/docker/bkci/support-files/codecc/templates/*.yml
+backends=(task)
 cd ..
 echo '[' > consul_kv.json
 for var in ${backends[@]};

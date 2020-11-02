@@ -24,13 +24,13 @@ spec:
             value: ci
           - name: AUTH_PROVIDER
             value: sample
-          - name: MYSQL_IP
+          - name: MONGO_HOST
             value: "{{ .Values.mongodb.host }}"
-          - name: MYSQL_PORT
+          - name: MONGO_PORT
             value: "{{ .Values.mongodb.port }}"
-          - name: MYSQL_USER
+          - name: MONGO_USER
             value: "{{ .Values.mongodb.user }}"
-          - name: MYSQL_PASS
+          - name: MONGO_PASS
             value: "{{ .Values.mongodb.password }}"
           {{- range $key, $value := .Values.env }}
           - name : {{ $key }}

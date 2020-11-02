@@ -3,6 +3,8 @@ source ../../env.properties
 
 kubectl create ns bkcodecc
 
+kubectl delete job/configuration -n bkcodecc
+
 if $initConfig; then
   echo 'unintall bk codecc with initConfig'
   helm3 uninstall bkcodecc -n bkcodecc
