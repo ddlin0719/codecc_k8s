@@ -7,6 +7,5 @@ $INSTALL_PATH/codecc/gateway/codecc_render_tpl -m ci $INSTALL_PATH/codecc/fronte
 cp -rf $INSTALL_PATH/codecc/gateway/core/* $INSTALL_PATH/codecc/gateway/
 
 ##启动程序
-nohup consul agent -datacenter=$CONSUL_DATACENTER -domain=$BK_CODECC_CONSUL_DOMAIN -data-dir=/tmp -join=$CONSUL_SERVER &
-/usr/local/openresty/nginx/sbin/nginx 
+/usr/local/openresty/nginx/sbin/nginx
 tail -f /dev/null

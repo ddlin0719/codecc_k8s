@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 echo "导入环境变量开始..."
-source ../env.properties
+source codecc_k8s/env.properties
 
 TMP_PACKAGE="tmp_codecc"
 IMAGE_VERSION=1.0
@@ -19,31 +19,40 @@ rm -rf $TMP_PACKAGE/*
 mkdir $TMP_PACKAGE/frontend
 cp -rf bk-ci/src/frontend/devops-codecc $TMP_PACKAGE/frontend
 cp -rf bk-ci/src/gateway/core $TMP_PACKAGE/gateway
-cp -rf gateway/gateway_run_codecc.sh $TMP_PACKAGE/
-cp -rf gateway/codecc_render_tpl $TMP_PACKAGE/
+cp -rf codecc_k8s/code_image/gateway/gateway_run_codecc.sh $TMP_PACKAGE/
+cp -rf codecc_k8s/code_image/gateway/codecc_render_tpl $TMP_PACKAGE/
 mkdir $TMP_PACKAGE/support-files
 cp -rf bk-ci/support-files/codecc/* $TMP_PACKAGE/support-files
-docker build -f gateway/gateway_codecc.Dockerfile -t $hub/bkci-codecc-gateway:$IMAGE_VERSION ./$TMP_PACKAGE --network=host
+docker build -f codecc_k8s/code_image/gateway/gateway_codecc.Dockerfile -t $hub/bkci-codecc-gateway:$IMAGE_VERSION ./$TMP_PACKAGE --network=host
 docker push $hub/bkci-codecc-gateway:$IMAGE_VERSION
 echo "打包gateway镜像完成"
 
 ## 打包backend镜像
 echo "打包backend镜像开始..."
-#backends=(task defect report asyncreport codeccjob schedule openapi apiquery quartz)
-backends=(task)
+backends=(task defect report asyncreport codeccjob schedule openapi apiquery quartz)
 for var in ${backends[@]};
 do
     echo "build $var start..."
 
     rm -rf $TMP_PACKAGE/*
-    cp -r backend/classpath $TMP_PACKAGE/
-    cp -r backend/bootstrap $TMP_PACKAGE/
-    cp -r backend/font $TMP_PACKAGE/
+    cp -r codecc_k8s/code_image/backend/classpath $TMP_PACKAGE/
+    cp -r codecc_k8s/code_image/backend/bootstrap $TMP_PACKAGE/
+    cp -r codecc_k8s/code_image/backend/font $TMP_PACKAGE/
     cp bk-ci/src/backend/codecc/release/boot-$var.jar $TMP_PACKAGE/
 
-    cp backend/module_run_codecc.sh $TMP_PACKAGE/
+    if [ $var == "report" ]
+    then
+      echo 'package report image'
+      cp codecc_k8s/code_image/backend/module_run_codecc_report.sh $TMP_PACKAGE/
+    elif [ $var == "asyncreport" ]
+    then
+      echo 'package async report image'
+      cp codecc_k8s/code_image/backend/module_run_codecc_asyncreport.sh $TMP_PACKAGE/
+    else
+      cp codecc_k8s/code_image/backend/module_run_codecc.sh $TMP_PACKAGE/
+    fi
 
-    docker build -f backend/$var.Dockerfile -t $hub/bkci-codecc-$var:$IMAGE_VERSION $TMP_PACKAGE --network=host
+    docker build -f codecc_k8s/code_image/backend/$var.Dockerfile -t $hub/bkci-codecc-$var:$IMAGE_VERSION $TMP_PACKAGE --network=host
     docker push $hub/bkci-codecc-$var:$IMAGE_VERSION
     echo "build $var finish..."
 done
@@ -53,9 +62,10 @@ echo '打包配置镜像中...'
 rm -rf $TMP_PACKAGE/*
 mkdir $TMP_PACKAGE/support-files
 cp -rf bk-ci/support-files/codecc/* $TMP_PACKAGE/support-files
-cp -rf configuration/import_config_codecc.sh $TMP_PACKAGE/
-cp -rf configuration/codecc_render_tpl $TMP_PACKAGE/
-docker build -f configuration/configuration_codecc.Dockerfile -t $hub/bkci-codecc-configuration:$IMAGE_VERSION $TMP_PACKAGE --network=host
+cp -rf codecc_k8s/code_image/configuration/import_config_codecc.sh $TMP_PACKAGE/
+cp -rf codecc_k8s/code_image/configuration/codecc_render_tpl $TMP_PACKAGE/
+cp -rf codecc_k8s/code_image/configuration/mongodb-org-4.0.repo $TMP_PACKAGE/
+docker build -f codecc_k8s/code_image/configuration/configuration_codecc.Dockerfile -t $hub/bkci-codecc-configuration:$IMAGE_VERSION $TMP_PACKAGE --network=host
 docker push $hub/bkci-codecc-configuration:$IMAGE_VERSION
 echo '打包配置镜像完成'
 

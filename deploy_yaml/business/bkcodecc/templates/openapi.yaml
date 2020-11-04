@@ -2,21 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: bkci-codecc-task
-  name: bkci-codecc-task
+    app: bkci-codecc-report
+  name: bkci-codecc-report
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: bkci-codecc-task
+      app: bkci-codecc-report
   template:
     metadata:
       labels:
-        app: bkci-codecc-task
+        app: bkci-codecc-report
     spec:
       containers:
-        - image: {{ .Values.image.hub }}/bkci-codecc-task:{{ .Values.image.tag }}
-          name: bkci-codecc-task
+        - image: {{ .Values.image.hub }}/bkci-codecc-report:{{ .Values.image.tag }}
+          name: bkci-codecc-report
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           workingDir: /data/docker/bkci/codecc/backend/
           command: ['/bin/sh','-c','/data/docker/bkci/codecc/backend/module_run_codecc.sh']
@@ -26,4 +26,4 @@ spec:
             - name: NODE_IP
               valueFrom:
                 fieldRef:
-                    fieldPath: status.hostIP
+                  fieldPath: status.hostIP

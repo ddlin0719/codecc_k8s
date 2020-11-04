@@ -21,7 +21,7 @@ spec:
           - name: INSTALL_PATH
             value: /data/docker/bkci
           - name: MODULE
-            value: ci
+            value: codecc
           - name: AUTH_PROVIDER
             value: sample
           - name: MONGO_HOST

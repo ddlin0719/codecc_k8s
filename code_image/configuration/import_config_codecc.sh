@@ -2,33 +2,35 @@ set -e
 pwd
 
 ##初始化数据库
-sh /data/docker/bkci/support-files/codecc/db_data.sh $MONGO_HOST $MONGO_PORT $MONGO_USER $MONGO_PASS
+echo 'init mongo db: '
+sh /data/docker/bkci/codecc/configuration/support-files/nosql/db_data.sh
 
 ## 初始化配置
-./codecc_render_tpl -m codecc /data/docker/bkci/support-files/codecc/templates/*.yml
-backends=(task)
-cd ..
-echo '[' > consul_kv.json
+echo 'render codecc service templates'
+./codecc_render_tpl -m codecc /data/docker/bkci/codecc/configuration/support-files/templates/*.yml
+
+## 增加vhost
+
+#增加虚拟机
+#rabbitmqctl add_vhost codecc-gray
+#增加角色
+#rabbitmqctl add_user codecc-gray uZDGLG7GL0hYQR9V
+#配置角色标签
+#rabbitmqctl set_user_tags codecc-gray administrator
+#设置角色权限
+#rabbitmqctl set_permissions -p codecc-gray codecc-gray "." "." ".*"
+#查看用户列表
+#rabbitmqctl list_users
+
+## 写consul
+backends=(task defect report asyncreport codeccjob schedule openapi apiquery quartz)
 for var in ${backends[@]};
 do
     echo "properties $var start..."
-    yaml_base64=$(base64 /data/docker/bkci/etc/codecc/application-$var.yml -w 0)
-    echo '	{' >> consul_kv.json
-    echo '		"key": "config/'$var'codecc:dev/data",' >> consul_kv.json
-    echo '		"flags": 0,' >> consul_kv.json
-    echo '    "value":"'$yaml_base64'"' >> consul_kv.json
-    echo '	},' >> consul_kv.json
+    curl --request PUT --data "$(cat /data/docker/bkci/etc/codecc/application-$var.yml)" http://${CONSUL_SERVER}:8500/v1/kv/config/${var}${BK_CI_CONSUL_DISCOVERY_TAG}:${BK_CODECC_PROFILE}/data
     echo "properties $var finish..."
 done
 
 echo "properties application start..."
-yaml_base64=$(base64 /data/docker/bkci/etc/codecc/common.yml -w 0)
-echo '	{' >> consul_kv.json
-echo '		"key": "config/application:dev/data",' >> consul_kv.json
-echo '		"flags": 0,' >> consul_kv.json
-echo '    "value":"'$yaml_base64'"' >> consul_kv.json
-echo '	}' >> consul_kv.json
+curl --request PUT --data "$(cat /data/docker/bkci/etc/codecc/common.yml)" http://${CONSUL_SERVER}:8500/v1/kv/config/application:${BK_CODECC_PROFILE}/data
 echo "properties application finish..."
-echo ']' >> consul_kv.json
-
-consul kv import --http-addr=$CONSUL_SERVER:8500 @consul_kv.json

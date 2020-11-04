@@ -152,7 +152,7 @@ env:
   ##########
   #codecc common
   ##########
-  BK_CODECC_PROFILE: opensource # 对应spring boot 启动的profile
+  BK_CODECC_PROFILE: codecc-prod # 对应spring boot 启动的profile
 
   BK_CODECC_RABBITMQ_ADDR: rabbitmq-codecc.service.consul:5672 # 默认rabbitmq-codecc.service.consul:5672. 按需修改. CODECC专用的RabbitMQ地址, HOST:PORT形式.
   BK_CODECC_RABBITMQ_PASSWORD:  # 无默认值. 按需修改.
