@@ -14,6 +14,11 @@ spec:
       labels:
         app: bkci-codecc-asyncreport
     spec:
+      dnsPolicy: ClusterFirstWithHostNet
+      hostAliases:
+        - ip: "{{ .Values.host.BK_CI_PRIVATE_IP }}"
+          hostnames:
+            - "{{ .Values.env.BK_CI_PRIVATE_HOST }}"
       containers:
         - image: {{ .Values.image.hub }}/bkci-codecc-asyncreport:{{ .Values.image.tag }}
           name: bkci-codecc-asyncreport

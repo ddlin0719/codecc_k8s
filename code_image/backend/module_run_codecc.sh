@@ -1,4 +1,10 @@
 #! /bin/sh
+
+# build init.sh to hosted which will be used in container
+hosts=$(ping -c 1 $BK_CI_PRIVATE_HOST|head -1|egrep -o "([0-9]{1,3}.){3}[0-9]{1,3}")
+hosts="$hosts $BK_CI_PRIVATE_HOST"
+template=$(cat /base/init.sh) && echo "${template/__hosts__/$hosts}" > /data/docker/bkci/ci/agent-package/script/init.sh
+
 mkdir -p /data/docker/bkci/codecc/backend/logs
 java -cp boot-$module.jar \
     -server \

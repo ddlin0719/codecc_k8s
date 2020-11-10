@@ -24,6 +24,14 @@ spec:
             value: codecc
           - name: AUTH_PROVIDER
             value: sample
+          - name: MYSQL_IP
+            value: "{{ .Values.mongodb.host }}"
+          - name: MYSQL_PORT
+            value: "{{ .Values.mongodb.port }}"
+          - name: MYSQL_USER
+            value: "{{ .Values.mongodb.user }}"
+          - name: MYSQL_PASS
+            value: "{{ .Values.mongodb.password }}"
           - name: MONGO_HOST
             value: "{{ .Values.mongodb.host }}"
           - name: MONGO_PORT

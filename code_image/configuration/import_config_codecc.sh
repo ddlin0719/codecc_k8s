@@ -2,6 +2,9 @@ set -e
 pwd
 
 ##初始化数据库
+echo 'init mysql'
+for SQL in /data/docker/bkci/codecc/configuration/support-files/sql/*.sql; do mysql -h$MYSQL_IP -P$MYSQL_PORT  -u$MYSQL_USER -p$MYSQL_PASS< $SQL; done
+
 echo 'init mongo db: '
 sh /data/docker/bkci/codecc/configuration/support-files/nosql/db_data.sh
 
